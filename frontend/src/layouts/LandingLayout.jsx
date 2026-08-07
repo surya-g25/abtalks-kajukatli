@@ -1,16 +1,12 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from '@/components/shell/Header'
-import Sidebar from '@/components/shell/Sidebar'
-import MobileBottomNav from '@/components/shell/MobileBottomNav'
-import MobileNav from '@/components/navigation/MobileNav'
 import Footer from '@/components/shell/Footer'
+import MobileNav from '@/components/navigation/MobileNav'
 import ScrollToTop from '@/components/shell/ScrollToTop'
-import DynamicBreadcrumb from '@/components/shell/DynamicBreadcrumb'
-import Container from '@/components/layout-primitives/Container'
 import { mainNavigation } from '@/config/navigation'
 
-export function AppLayout() {
+export function LandingLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const mobileItems = mainNavigation.map((item) => ({
@@ -29,19 +25,12 @@ export function AppLayout() {
         onClose={() => setMobileMenuOpen(false)}
         items={mobileItems}
       />
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 min-w-0">
-          <Container maxWidth="full">
-            <DynamicBreadcrumb />
-            <Outlet />
-          </Container>
-        </main>
-      </div>
-      <MobileBottomNav />
+      <main className="flex-1">
+        <Outlet />
+      </main>
       <Footer />
     </div>
   )
 }
 
-export default AppLayout
+export default LandingLayout
