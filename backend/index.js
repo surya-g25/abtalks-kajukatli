@@ -2,13 +2,21 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
-import healthRoutes from './src/routes/health.routes.js'
+import apiRoutes from './src/routes/index.js'
+import { connectDB } from './src/config/db.js'
+import { seedDatabase } from './src/data/seeder.js'
 import { errorHandler } from './src/middlewares/errorHandler.js'
+import { notFoundHandler } from './src/middlewares/notFoundHandler.js'
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 5000
+
+// Initialize MongoDB Connection & Seeding
+connectDB().then(() => {
+  seedDatabase()
+})
 
 // Middlewares
 app.use(
@@ -21,8 +29,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
-// Routes
-app.use('/api', healthRoutes)
+// API Routes
+app.use('/api', apiRoutes)
+
+// 404 Catch-all Handler
+app.use(notFoundHandler)
 
 // Error handling middleware
 app.use(errorHandler)
