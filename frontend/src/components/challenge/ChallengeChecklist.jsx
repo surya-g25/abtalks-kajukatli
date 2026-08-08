@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
+import { updateChallengeProgress } from '@/services/challengeService'
 
-export function ChallengeChecklist({ onProgressUpdate }) {
-  const [tasks, setTasks] = useState([
+export function ChallengeChecklist({ challenge, onProgressUpdate }) {
+  const defaultTasks = [
     { id: 1, label: 'Read Instructions & Requirements Spec', completed: true },
     { id: 2, label: 'Setup React Project Boilerplate & Files', completed: true },
     { id: 3, label: 'Write useAsync Hook State Machine Logic', completed: true },
@@ -13,20 +14,41 @@ export function ChallengeChecklist({ onProgressUpdate }) {
     { id: 6, label: 'Push Commits to Public GitHub Repository', completed: true },
     { id: 7, label: 'Post Learning Reflection on LinkedIn (#ABTalks)', completed: false },
     { id: 8, label: 'Submit Final Code & Claim XP Reward', completed: false },
-  ])
+  ]
 
-  const toggleTask = (id) => {
-    setTasks((prev) => {
-      const updated = prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
-      const count = updated.filter((t) => t.completed).length
-      const percentage = Math.round((count / updated.length) * 100)
-      onProgressUpdate?.(percentage)
-      return updated
-    })
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (challenge && challenge.tasks) {
+      setTasks(challenge.tasks.map((t) => ({ id: t.id, label: t.text, completed: t.completed })))
+    } else {
+      setTasks(defaultTasks)
+    }
+  }, [challenge])
+
+  const toggleTask = async (id) => {
+    const updated = tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    setTasks(updated)
+
+    const count = updated.filter((t) => t.completed).length
+    const percentage = Math.round((count / updated.length) * 100)
+    onProgressUpdate?.(percentage)
+
+    if (challenge) {
+      try {
+        await updateChallengeProgress(
+          challenge.dayNumber || 14,
+          updated.map((t) => ({ id: t.id, completed: t.completed }))
+        )
+      } catch (err) {
+        console.error('Failed to sync checklist changes with server:', err)
+      }
+    }
   }
 
   const completedCount = tasks.filter((t) => t.completed).length
-  const percentage = Math.round((completedCount / tasks.length) * 100)
+  const totalTasks = tasks.length || 1
+  const percentage = Math.round((completedCount / totalTasks) * 100)
 
   return (
     <GlassCard className="p-6 border border-neutral-800/80 shadow-2xl space-y-4">
@@ -39,7 +61,7 @@ export function ChallengeChecklist({ onProgressUpdate }) {
           <p className="text-xs text-neutral-400 mt-0.5">Click tasks as you complete them to track live progress.</p>
         </div>
         <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full">
-          {completedCount} / {tasks.length} ({percentage}%)
+          {completedCount} / {totalTasks} ({percentage}%)
         </span>
       </div>
 

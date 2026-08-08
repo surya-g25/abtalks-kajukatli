@@ -1,14 +1,50 @@
 import StatCard from '@/components/cards/StatCard'
 import Icon from '@/components/common/Icon'
 
-export function QuickStatsSection() {
+export function QuickStatsSection({ statistics }) {
   const stats = [
-    { title: 'Completed Challenges', value: '28', change: '+4 this week', isPositive: true, iconName: 'Target' },
-    { title: 'GitHub Commits', value: '142', change: '+18 this week', isPositive: true, iconName: 'GitCommit' },
-    { title: 'LinkedIn Posts', value: '18', change: '+2 this week', isPositive: true, iconName: 'Share2' },
-    { title: 'Hours Studied', value: '64.5h', change: '+8.2h this week', isPositive: true, iconName: 'Clock' },
-    { title: 'XP Earned', value: '2,450', change: '+350 XP', isPositive: true, iconName: 'Zap' },
-    { title: 'Avg. Completion Rate', value: '94%', change: '+2.5%', isPositive: true, iconName: 'TrendingUp' },
+    {
+      title: 'Completed Challenges',
+      value: (statistics?.completedChallenges || 0).toString(),
+      change: '+1 this week',
+      isPositive: true,
+      iconName: 'Target',
+    },
+    {
+      title: 'GitHub Commits',
+      value: (statistics?.githubCommits || 0).toString(),
+      change: '+3 this week',
+      isPositive: true,
+      iconName: 'GitCommit',
+    },
+    {
+      title: 'LinkedIn Posts',
+      value: (statistics?.linkedinPosts || 0).toString(),
+      change: '+1 this week',
+      isPositive: true,
+      iconName: 'Share2',
+    },
+    {
+      title: 'Hours Studied',
+      value: `${statistics?.hoursStudied || 0}h`,
+      change: '+2h this week',
+      isPositive: true,
+      iconName: 'Clock',
+    },
+    {
+      title: 'XP Earned',
+      value: (statistics?.xpEarned || 0).toLocaleString(),
+      change: '+150 XP',
+      isPositive: true,
+      iconName: 'Zap',
+    },
+    {
+      title: 'Avg. Completion Rate',
+      value: `${statistics?.averageCompletionRate || 94}%`,
+      change: '+1.5%',
+      isPositive: true,
+      iconName: 'TrendingUp',
+    },
   ]
 
   return (

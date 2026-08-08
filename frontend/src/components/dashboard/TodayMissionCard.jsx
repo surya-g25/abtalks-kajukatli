@@ -1,29 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Icon from '@/components/common/Icon'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import GlassCard from '@/components/cards/GlassCard'
+import { updateChallengeProgress } from '@/services/challengeService'
 
-export function TodayMissionCard() {
-  const [tasks, setTasks] = useState([
+export function TodayMissionCard({ challenge }) {
+  const defaultTasks = [
     { id: 1, text: 'Read Problem Statement & Requirements', completed: true },
     { id: 2, text: 'Write Custom useAsync Hook Logic', completed: true },
     { id: 3, text: 'Test Exponential Backoff & Auto-retry', completed: true },
     { id: 4, text: 'Push Commits to GitHub Repository', completed: true },
     { id: 5, text: 'Post Reflection on LinkedIn (#ABTalks)', completed: false },
-  ])
+  ]
 
-  const toggleTask = (id) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
-    )
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (challenge && challenge.tasks) {
+      // Map schema task text to local task item text field
+      setTasks(challenge.tasks.map((t) => ({ id: t.id, text: t.text, completed: t.completed })))
+    } else {
+      setTasks(defaultTasks)
+    }
+  }, [challenge])
+
+  const toggleTask = async (id) => {
+    const updated = tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
+    setTasks(updated)
+
+    if (challenge) {
+      try {
+        await updateChallengeProgress(challenge.dayNumber || 14, updated)
+      } catch (err) {
+        console.error('Failed to sync checklist changes with server:', err)
+      }
+    }
   }
 
   const completedCount = tasks.filter((t) => t.completed).length
-  const totalTasks = tasks.length
+  const totalTasks = tasks.length || 1
   const progressPercentage = Math.round((completedCount / totalTasks) * 100)
+
+  const title = challenge?.title || 'Build a Custom Hook for Async Data Fetching with Auto-retry'
+  const category = challenge?.category || 'React & Async Logic'
+  const xpReward = challenge?.xpReward || 150
+  const timeEstimate = challenge?.timeEstimate || '45 mins'
+  const difficulty = challenge?.difficulty || 'Intermediate'
 
   return (
     <GlassCard className="relative overflow-hidden border-2 border-amber-500/30 bg-gradient-to-br from-neutral-900/90 via-neutral-900/60 to-amber-950/20 shadow-2xl p-6 sm:p-7">
@@ -38,18 +63,18 @@ export function TodayMissionCard() {
               Today's Mission
             </span>
             <Badge variant="info" className="text-[10px] font-bold">
-              React & Async Logic
+              {category}
             </Badge>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
-            Build a Custom Hook for Async Data Fetching with Auto-retry
+            {title}
           </h2>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
           <div className="text-right">
             <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 block">Reward</span>
-            <span className="text-sm font-mono font-extrabold text-amber-400">+150 XP</span>
+            <span className="text-sm font-mono font-extrabold text-amber-400">+{xpReward} XP</span>
           </div>
         </div>
       </div>
@@ -58,11 +83,11 @@ export function TodayMissionCard() {
       <div className="py-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-neutral-400">
         <div className="flex items-center gap-1.5 bg-neutral-950/60 px-3 py-1.5 rounded-xl border border-neutral-800">
           <Icon name="Clock" size={15} className="text-amber-400" />
-          <span>Est. 45 mins</span>
+          <span>Est. {timeEstimate}</span>
         </div>
         <div className="flex items-center gap-1.5 bg-neutral-950/60 px-3 py-1.5 rounded-xl border border-neutral-800">
           <Icon name="Shield" size={15} className="text-indigo-400" />
-          <span>Intermediate</span>
+          <span>{difficulty}</span>
         </div>
         <div className="flex items-center gap-1.5 bg-neutral-950/60 px-3 py-1.5 rounded-xl border border-neutral-800">
           <Icon name="CheckCircle2" size={15} className="text-emerald-400" />

@@ -12,3 +12,10 @@ export const getChallengeByDay = asyncHandler(async (req, res) => {
   const challenge = await challengeService.getChallengeByDay(day)
   return res.status(200).json(new ApiResponse(200, challenge, `Challenge day ${day} fetched successfully`))
 })
+
+export const updateChallengeProgress = asyncHandler(async (req, res) => {
+  const { day } = req.params
+  const { tasks } = req.body
+  const challenge = await challengeService.updateChallengeProgress(day, tasks)
+  return res.status(200).json(new ApiResponse(200, challenge, `Challenge day ${day} progress updated successfully`))
+})

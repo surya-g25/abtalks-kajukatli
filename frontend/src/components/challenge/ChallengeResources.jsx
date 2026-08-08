@@ -1,8 +1,8 @@
 import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
 
-export function ChallengeResources() {
-  const resources = [
+export function ChallengeResources({ challenge }) {
+  const defaultResources = [
     {
       title: 'Official React Docs — Custom Hooks',
       type: 'Documentation',
@@ -37,6 +37,23 @@ export function ChallengeResources() {
     },
   ]
 
+  const resourcesList = challenge?.resources && challenge.resources.length > 0
+    ? challenge.resources.map((r, idx) => ({
+        title: r.title,
+        type: r.type,
+        url: r.url,
+        description: r.description,
+        iconName: idx === 0 ? 'BookOpen' : idx === 1 ? 'FileText' : idx === 2 ? 'Video' : 'Code',
+        color: idx % 4 === 0
+          ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20'
+          : idx % 4 === 1
+          ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+          : idx % 4 === 2
+          ? 'text-red-400 bg-red-500/10 border-red-500/20'
+          : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+      }))
+    : defaultResources
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
@@ -44,11 +61,11 @@ export function ChallengeResources() {
           <Icon name="Bookmark" size={18} className="text-amber-400" />
           <h3 className="text-lg font-black text-white tracking-tight">Curated Learning Resources</h3>
         </div>
-        <span className="text-xs font-semibold text-neutral-400">4 Essential Guides</span>
+        <span className="text-xs font-semibold text-neutral-400">{resourcesList.length} Learning Guides</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {resources.map((res, idx) => (
+        {resourcesList.map((res, idx) => (
           <GlassCard
             key={idx}
             className="p-5 border border-neutral-800/80 hover:border-neutral-700 transition flex flex-col justify-between group"

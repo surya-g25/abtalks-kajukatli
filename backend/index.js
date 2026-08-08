@@ -11,17 +11,28 @@ import { notFoundHandler } from './src/middlewares/notFoundHandler.js'
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 
 // Initialize MongoDB Connection & Seeding
 connectDB().then(() => {
   seedDatabase()
 })
 
-// Middlewares
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+].filter(Boolean)
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true)
+      if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+        return callback(null, true)
+      }
+      return callback(new Error('CORS policy does not allow this origin'), false)
+    },
     credentials: true,
   })
 )

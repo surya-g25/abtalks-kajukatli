@@ -18,6 +18,11 @@ const studentSchema = new mongoose.Schema(
     bio: { type: String, default: 'Full-stack React & Node.js Developer in ABTalks cohort.' },
     github: { type: String, default: 'alexrivera' },
     linkedin: { type: String, default: 'alexrivera' },
+    lastActiveDate: { type: String, default: '' },
+    weeklyXp: { type: Number, default: 0 },
+    monthlyXp: { type: Number, default: 0 },
+    consistency: { type: Number, default: 90 },
+    weeklyChange: { type: String, default: '+0' },
   },
   { timestamps: true }
 )

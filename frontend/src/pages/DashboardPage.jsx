@@ -15,20 +15,16 @@ import QuickActionsToolbar from '@/components/dashboard/QuickActionsToolbar'
 import { fetchDashboardData } from '@/services/dashboardService'
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState({
-    name: 'Alex Rivera',
-    avatar: '',
-    level: 12,
-    xp: 2450,
-  })
+  const [dashboardData, setDashboardData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     let isMounted = true
     async function loadData() {
       try {
         const data = await fetchDashboardData()
-        if (data && data.student && isMounted) {
-          setUserData(data.student)
+        if (data && isMounted) {
+          setDashboardData(data)
         }
       } catch (err) {
         console.error('Failed to load API dashboard data', err)
@@ -42,6 +38,54 @@ export default function DashboardPage() {
     }
   }, [])
 
+  if (isLoading) {
+    return (
+      <PageWrapper
+        title="Loading Dashboard..."
+        description="Please wait while we compile your real-time developer statistics."
+        className="space-y-6 pt-2"
+      >
+        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+          <div className="w-12 h-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
+          <p className="text-sm font-bold text-neutral-400">Loading gamification stats...</p>
+        </div>
+      </PageWrapper>
+    )
+  }
+
+  // Fallbacks if backend response lacks data
+  const student = dashboardData?.student || {
+    name: 'Alex Rivera',
+    avatar: '',
+    level: 12,
+    xp: 2450,
+    title: 'Code Alchemist',
+    currentStreak: 14,
+    longestStreak: 21,
+    streakFreeze: { active: 1, available: 2 },
+    xpInCurrentLevel: 850,
+    xpForNextLevel: 1000,
+  }
+
+  const todayMission = dashboardData?.todayMission || null
+  const leaderboard = dashboardData?.leaderboard || []
+  const achievements = dashboardData?.achievements || []
+  const statistics = dashboardData?.statistics || {
+    completedChallenges: 28,
+    githubCommits: 142,
+    linkedinPosts: 18,
+    hoursStudied: 64.5,
+    xpEarned: 2450,
+    averageCompletionRate: 94,
+  }
+  const progress = dashboardData?.progress || {
+    activeDays: 42,
+    missedDays: 3,
+    currentStreak: 14,
+    weeklyActivity: [],
+    heatmapData: [],
+  }
+
   return (
     <PageWrapper
       title="Student Dashboard"
@@ -49,43 +93,46 @@ export default function DashboardPage() {
       className="space-y-6 pt-2"
     >
       {/* SECTION 1: Dashboard Header */}
-      <DashboardHeader user={userData} />
+      <DashboardHeader user={student} />
 
       {/* SECTION 2 & 3: Today's Mission (Hero) & Streak System */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-2">
-          <TodayMissionCard />
+          <TodayMissionCard challenge={todayMission} />
         </div>
         <div className="lg:col-span-1">
           <StreakCard
-            currentStreak={userData.currentStreak || 14}
-            longestStreak={userData.longestStreak || 21}
+            currentStreak={student.currentStreak}
+            longestStreak={student.longestStreak}
+            streakFreeze={student.streakFreeze}
           />
         </div>
       </div>
 
       {/* SECTION 4: XP & Level Progress */}
       <XPLevelCard
-        level={userData.level || 12}
-        currentXp={userData.xp || 2450}
-        title={userData.title || 'Code Alchemist'}
+        level={student.level}
+        currentXp={student.xp}
+        xpInCurrentLevel={student.xpInCurrentLevel}
+        xpForNextLevel={student.xpForNextLevel}
+        title={student.title}
       />
 
       {/* SECTION 7: Quick Statistics */}
-      <QuickStatsSection />
+      <QuickStatsSection statistics={statistics} />
 
       {/* SECTION 8: Weekly Analytics */}
-      <WeeklyAnalyticsSection />
+      <WeeklyAnalyticsSection weeklyActivity={progress.weeklyActivity} />
 
       {/* SECTION 5 & 6: Contribution Heatmap & Recent Achievements */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ContributionHeatmapSection />
-        <AchievementsSection />
+        <ContributionHeatmapSection progress={progress} />
+        <AchievementsSection achievements={achievements} />
       </div>
 
       {/* SECTION 9 & 10: Leaderboard Preview & Developer Journey Timeline */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <LeaderboardSection />
+        <LeaderboardSection leaderboard={leaderboard} student={student} />
         <DeveloperJourneySection />
       </div>
 

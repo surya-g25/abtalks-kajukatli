@@ -18,3 +18,33 @@ export const getAllChallenges = async () => {
     return [mockChallengeDay14]
   }
 }
+
+export const updateChallengeProgress = async (dayNumber, tasks) => {
+  try {
+    const challenge = await Challenge.findOne({ dayNumber: Number(dayNumber) })
+    if (!challenge) {
+      throw new Error(`Challenge day ${dayNumber} not found`)
+    }
+
+    // Sync tasks
+    tasks.forEach((updatedTask) => {
+      const task = challenge.tasks.find((t) => t.id === updatedTask.id)
+      if (task) {
+        task.completed = updatedTask.completed
+      }
+    })
+
+    // Calculate completion percentage
+    const completedCount = challenge.tasks.filter((t) => t.completed).length
+    const progress = Math.round((completedCount / challenge.tasks.length) * 100)
+
+    challenge.progress = progress
+    challenge.isCompleted = progress === 100
+
+    await challenge.save()
+    return challenge
+  } catch (error) {
+    console.error('Error updating challenge progress:', error?.message)
+    throw error
+  }
+}

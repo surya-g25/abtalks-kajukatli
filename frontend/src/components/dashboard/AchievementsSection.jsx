@@ -2,8 +2,8 @@ import AchievementCard from '@/components/cards/AchievementCard'
 import Icon from '@/components/common/Icon'
 import { Link } from 'react-router-dom'
 
-export function AchievementsSection() {
-  const achievements = [
+export function AchievementsSection({ achievements }) {
+  const defaultAchievements = [
     { title: 'First Commit', description: 'Pushed your first verified code snippet.', iconName: 'GitCommit', unlocked: true },
     { title: '7-Day Warrior', description: 'Maintained a 7-day daily learning streak.', iconName: 'Flame', unlocked: true },
     { title: '30-Day Legend', description: 'Complete 30 consecutive active days.', iconName: 'Crown', unlocked: false },
@@ -12,6 +12,14 @@ export function AchievementsSection() {
     { title: 'LinkedIn Creator', description: 'Shared 5 learning milestones on LinkedIn.', iconName: 'Share2', unlocked: true },
     { title: 'Open Source Explorer', description: 'Contributed to an open repository challenge.', iconName: 'Globe', unlocked: false },
   ]
+
+  const displayAchievements = achievements && achievements.length > 0 ? achievements : defaultAchievements
+  const unlockedCount = displayAchievements.filter((item) => item.unlocked).length
+  const totalCount = displayAchievements.length || 1
+  const completionPercentage = Math.round((unlockedCount / totalCount) * 100)
+
+  // Show only 3 recent/unlocked achievements to keep dashboard tidy
+  const previewList = displayAchievements.slice(0, 3)
 
   return (
     <div className="space-y-4">
@@ -22,7 +30,7 @@ export function AchievementsSection() {
             <h3 className="text-lg font-black text-white tracking-tight">Recent Achievements</h3>
           </div>
           <p className="text-xs text-neutral-400 mt-0.5">
-            4 of 7 Badges Unlocked • 57% Completion
+            {unlockedCount} of {totalCount} Badges Unlocked • {completionPercentage}% Completion
           </p>
         </div>
 
@@ -36,7 +44,7 @@ export function AchievementsSection() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-        {achievements.map((item, idx) => (
+        {previewList.map((item, idx) => (
           <AchievementCard
             key={idx}
             title={item.title}

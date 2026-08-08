@@ -17,10 +17,10 @@ import {
   ResponsiveChartWrapper,
 } from '@/components/charts/ChartWrappers'
 
-export function WeeklyAnalyticsSection() {
+export function WeeklyAnalyticsSection({ weeklyActivity }) {
   const [activeFilter, setActiveFilter] = useState('xp')
 
-  const weeklyData = [
+  const defaultWeeklyData = [
     { day: 'Mon', xp: 250, tasks: 4, consistency: 90 },
     { day: 'Tue', xp: 320, tasks: 5, consistency: 95 },
     { day: 'Wed', xp: 180, tasks: 3, consistency: 85 },
@@ -30,6 +30,12 @@ export function WeeklyAnalyticsSection() {
     { day: 'Sun', xp: 450, tasks: 6, consistency: 98 },
   ]
 
+  const weeklyData = weeklyActivity && weeklyActivity.length > 0 ? weeklyActivity : defaultWeeklyData
+
+  const totalXp = weeklyData.reduce((acc, curr) => acc + (curr.xp || 0), 0)
+  const avgTasks = (weeklyData.reduce((acc, curr) => acc + (curr.tasks || 0), 0) / weeklyData.length).toFixed(1)
+  const avgConsistency = (weeklyData.reduce((acc, curr) => acc + (curr.consistency || 0), 0) / weeklyData.length).toFixed(1)
+
   const filters = [
     { label: 'XP Growth', value: 'xp' },
     { label: 'Daily Completion', value: 'tasks' },
@@ -37,9 +43,9 @@ export function WeeklyAnalyticsSection() {
   ]
 
   const stats = [
-    { label: 'This Week XP', value: '2,450 XP' },
-    { label: 'Avg Daily Tasks', value: '5.1 Tasks' },
-    { label: 'Consistency Index', value: '94.3%' },
+    { label: 'This Week XP', value: `${totalXp.toLocaleString()} XP` },
+    { label: 'Avg Daily Tasks', value: `${avgTasks} Tasks` },
+    { label: 'Consistency Index', value: `${avgConsistency}%` },
   ]
 
   return (

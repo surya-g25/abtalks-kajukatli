@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const statisticsSchema = new mongoose.Schema(
   {
+    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true, index: true },
     completedChallenges: { type: Number, default: 28 },
     githubCommits: { type: Number, default: 142 },
     linkedinPosts: { type: Number, default: 18 },

@@ -1,7 +1,7 @@
-import Achievement from '../models/Achievement.js'
+import Mission from '../models/Mission.js'
 import Student from '../models/Student.js'
 
-export const getAchievements = async () => {
+export const getMissions = async () => {
   try {
     let student = await Student.findOne({ email: 'alex.rivera@abtalks.dev' })
     if (!student) {
@@ -11,10 +11,9 @@ export const getAchievements = async () => {
       return []
     }
 
-    const achievements = await Achievement.find({ studentId: student._id })
-    return achievements
+    return await Mission.find({ studentId: student._id })
   } catch (error) {
-    console.error('Error in getAchievements:', error.message)
+    console.error('Error in getMissions service:', error?.message)
     return []
   }
 }

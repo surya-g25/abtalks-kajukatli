@@ -2,8 +2,9 @@ import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
 import LinearProgress from '@/components/progress/LinearProgress'
 
-export function ChallengeRewardPreview({ baseXP = 150, streakBonus = 50, firstTryBonus = 50 }) {
-  const totalXP = baseXP + streakBonus + firstTryBonus
+export function ChallengeRewardPreview({ challenge, baseXP = 150, streakBonus = 50, firstTryBonus = 50 }) {
+  const finalBaseXP = challenge?.xpReward || baseXP
+  const totalXP = finalBaseXP + streakBonus + firstTryBonus
 
   return (
     <GlassCard className="p-6 border border-neutral-800/80 shadow-2xl space-y-5">
@@ -21,10 +22,10 @@ export function ChallengeRewardPreview({ baseXP = 150, streakBonus = 50, firstTr
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="p-3 rounded-xl bg-neutral-950/70 border border-neutral-800">
           <span className="text-[10px] font-bold text-neutral-400 uppercase block">Base Mission</span>
-          <span className="text-base font-mono font-extrabold text-amber-400 mt-0.5 block">+{baseXP} XP</span>
+          <span className="text-base font-mono font-extrabold text-amber-400 mt-0.5 block">+{finalBaseXP} XP</span>
         </div>
         <div className="p-3 rounded-xl bg-neutral-950/70 border border-neutral-800">
-          <span className="text-[10px] font-bold text-neutral-400 uppercase block">14d Streak</span>
+          <span className="text-[10px] font-bold text-neutral-400 uppercase block">Streak Bonus</span>
           <span className="text-base font-mono font-extrabold text-emerald-400 mt-0.5 block">+{streakBonus} XP</span>
         </div>
         <div className="p-3 rounded-xl bg-neutral-950/70 border border-neutral-800">
@@ -36,12 +37,12 @@ export function ChallengeRewardPreview({ baseXP = 150, streakBonus = 50, firstTr
       {/* Level Progress Impact */}
       <div className="space-y-2">
         <div className="flex justify-between items-center text-xs font-bold">
-          <span className="text-neutral-300">Impact on Level 12 Progress</span>
-          <span className="text-amber-400 font-mono">2,450 → 2,700 XP</span>
+          <span className="text-neutral-300">Impact on Level Progress</span>
+          <span className="text-amber-400 font-mono">+{totalXP} XP Awarded</span>
         </div>
-        <LinearProgress progress={2700} total={3000} color="amber" size="md" />
+        <LinearProgress progress={totalXP} total={1000} color="amber" size="md" />
         <span className="text-[10px] text-neutral-400 block text-right font-semibold">
-          Only 300 XP remaining to unlock Level 13!
+          Unlocks premium avatars and beta feature access upon level up!
         </span>
       </div>
 
@@ -52,7 +53,7 @@ export function ChallengeRewardPreview({ baseXP = 150, streakBonus = 50, firstTr
         </div>
         <div className="text-xs">
           <span className="font-extrabold text-amber-300 block">Badge Unlock Alert</span>
-          <span className="text-neutral-300">Submitting today unlocks the <strong className="text-white">"Flame Master"</strong> & <strong className="text-white">"Async Ace"</strong> achievement badges.</span>
+          <span className="text-neutral-300">Submitting today unlocks the <strong className="text-white">"First Commit"</strong> & <strong className="text-white">"LinkedIn Creator"</strong> achievement badges.</span>
         </div>
       </div>
     </GlassCard>

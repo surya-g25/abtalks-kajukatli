@@ -25,7 +25,7 @@ const challengeSchema = new mongoose.Schema(
     resources: [
       {
         title: String,
-        type: String,
+        type: { type: String },
         url: String,
         description: String,
       },

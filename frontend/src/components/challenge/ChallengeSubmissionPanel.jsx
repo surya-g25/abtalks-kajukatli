@@ -6,7 +6,7 @@ import Textarea from '@/components/ui/Textarea'
 import Input from '@/components/ui/Input'
 import { submitChallenge } from '@/services/challengeService'
 
-export function ChallengeSubmissionPanel({ onSubmitSuccess }) {
+export function ChallengeSubmissionPanel({ challenge, onSubmitSuccess }) {
   const [githubRepo, setGithubRepo] = useState('alexrivera/react-async-retry-hook')
   const [commitHash, setCommitHash] = useState('https://github.com/alexrivera/react-async-retry-hook/commit/a8f9c12')
   const [linkedinUrl, setLinkedinUrl] = useState('alexrivera/posts/react-async-hook-day14')
@@ -47,7 +47,7 @@ export function ChallengeSubmissionPanel({ onSubmitSuccess }) {
     setIsSubmitting(true)
     try {
       await submitChallenge({
-        dayNumber: 14,
+        dayNumber: challenge?.dayNumber || 14,
         githubRepo,
         commitUrl: commitHash,
         linkedinUrl,
@@ -55,8 +55,8 @@ export function ChallengeSubmissionPanel({ onSubmitSuccess }) {
       })
       onSubmitSuccess?.()
     } catch (err) {
-      console.warn('Submission network fallback:', err?.message)
-      onSubmitSuccess?.()
+      console.error('Submission error:', err?.message)
+      setApiErrorMsg(err?.message || 'Submission failed. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

@@ -7,6 +7,8 @@ import submissionRoutes from './submissionRoutes.js'
 import leaderboardRoutes from './leaderboardRoutes.js'
 import achievementRoutes from './achievementRoutes.js'
 import statisticsRoutes from './statisticsRoutes.js'
+import progressRoutes from './progressRoutes.js'
+import missionRoutes from './missionRoutes.js'
 
 const router = Router()
 
@@ -18,6 +20,7 @@ router.use('/submissions', submissionRoutes)
 router.use('/leaderboard', leaderboardRoutes)
 router.use('/achievements', achievementRoutes)
 router.use('/statistics', statisticsRoutes)
-router.use('/progress', statisticsRoutes)
+router.use('/progress', progressRoutes)
+router.use('/missions', missionRoutes)
 
 export default router

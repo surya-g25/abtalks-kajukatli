@@ -1,15 +1,34 @@
 import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
 
-export function ChallengeDescription() {
-  const skills = ['React 19', 'Custom Hooks', 'Async / Await', 'Error Handling', 'TypeScript', 'State Machines']
+export function ChallengeDescription({ challenge }) {
+  const skills = challenge?.skillsCovered || [
+    'React 19',
+    'Custom Hooks',
+    'Async / Await',
+    'Error Handling',
+    'TypeScript',
+    'State Machines',
+  ]
 
-  const learningGoals = [
+  const learningGoals = challenge?.learningGoals || [
     'Design a reusable `useAsync` hook supporting `data`, `error`, `isLoading`, `isError`, and `isSuccess` states.',
     'Implement exponential backoff retry algorithms with configurable max retry attempts.',
     'Handle race conditions and memory leaks by implementing `AbortController` cleanup functions.',
     'Publish a clean GitHub repository with typed interfaces and unit test coverage.',
   ]
+
+  const description = challenge?.description ||
+    'Production applications must gracefully handle network latency, transient API failures, and rate limits. Your objective today is to construct an enterprise-grade React custom hook useAsync that executes asynchronous promises, handles error states gracefully, and automatically retries failed requests with customizable exponential backoff delays.'
+
+  const problemStatement = challenge?.problemStatement ||
+    'Standard useEffect data fetching often leads to unhandled rejection states, memory leaks on unmounted components, and lack of automatic retry support when third-party APIs experience intermittent dropped packets.'
+
+  const expectedOutcome = challenge?.expectedOutcome ||
+    'A fully tested useAsync(asyncFn, options) hook that returns { data, error, isLoading, retry, cancel } with automatic retry logic and unit test coverage.'
+
+  const proTips = challenge?.proTips ||
+    'Always pass an AbortController.signal to fetch calls inside the hook cleanup return function to prevent updating state on unmounted React components.'
 
   return (
     <GlassCard className="p-6 sm:p-7 border border-neutral-800/80 shadow-2xl space-y-6">
@@ -20,7 +39,7 @@ export function ChallengeDescription() {
           <h2 className="text-xl font-black text-white tracking-tight">Challenge Objective</h2>
         </div>
         <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-          Production applications must gracefully handle network latency, transient API failures, and rate limits. Your objective today is to construct an enterprise-grade React custom hook <code className="px-1.5 py-0.5 rounded bg-neutral-950 text-amber-400 font-mono text-xs">useAsync</code> that executes asynchronous promises, handles error states gracefully, and automatically retries failed requests with customizable exponential backoff delays.
+          {description}
         </p>
       </div>
 
@@ -32,7 +51,7 @@ export function ChallengeDescription() {
             <span>The Problem</span>
           </div>
           <p className="text-xs text-neutral-400 leading-relaxed">
-            Standard <code className="text-neutral-200">useEffect</code> data fetching often leads to unhandled rejection states, memory leaks on unmounted components, and lack of automatic retry support when third-party APIs experience intermittent dropped packets.
+            {problemStatement}
           </p>
         </div>
 
@@ -42,7 +61,7 @@ export function ChallengeDescription() {
             <span>Expected Outcome</span>
           </div>
           <p className="text-xs text-neutral-400 leading-relaxed">
-            A fully tested <code className="text-neutral-200">useAsync(asyncFn, options)</code> hook that returns <code className="text-neutral-200 font-mono">{"{ data, error, isLoading, retry, cancel }"}</code> with automatic retry logic and unit test coverage.
+            {expectedOutcome}
           </p>
         </div>
       </div>
@@ -84,11 +103,11 @@ export function ChallengeDescription() {
 
       {/* Pro Tip */}
       <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-3">
-        <Icon name="Lightbulb" size={20} className="text-amber-400 shrink-0 mt-0.5" />
+        <Icon name="Lightbulb" size={20} className="text-amber-400" />
         <div className="text-xs">
           <span className="font-extrabold text-amber-300 block mb-1">Pro Tip: Clean Up Subscriptions</span>
           <span className="text-neutral-300 leading-relaxed">
-            Always pass an <code className="text-amber-400 font-mono">AbortController.signal</code> to fetch calls inside the hook cleanup return function to prevent updating state on unmounted React components.
+            {proTips}
           </span>
         </div>
       </div>

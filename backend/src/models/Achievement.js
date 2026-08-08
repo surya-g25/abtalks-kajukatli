@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const achievementSchema = new mongoose.Schema(
   {
+    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true, index: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
     iconName: { type: String, default: 'Award' },
