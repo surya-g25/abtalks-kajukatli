@@ -8,7 +8,7 @@ const apiClient = axios.create({
   withCredentials: true,
 })
 
-// Request interceptor placeholder
+// Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     return config
@@ -16,10 +16,17 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Response interceptor placeholder
+// Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Dispatch event to AuthProvider if session expired during active session
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'))
+    }
+    return Promise.reject(error)
+  }
 )
 
 export default apiClient
+

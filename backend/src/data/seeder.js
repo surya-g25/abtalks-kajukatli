@@ -21,6 +21,7 @@ const mockStudentsToSeed = [
   {
     name: 'Sarah Chen',
     email: 'sarah.chen@abtalks.dev',
+    password: 'Password123!',
     avatar: '',
     level: 18,
     xp: 3890,
@@ -41,6 +42,7 @@ const mockStudentsToSeed = [
   {
     name: 'Marcus Vance',
     email: 'marcus.vance@abtalks.dev',
+    password: 'Password123!',
     avatar: '',
     level: 16,
     xp: 3450,
@@ -61,6 +63,7 @@ const mockStudentsToSeed = [
   {
     name: 'Devon Lane',
     email: 'devon.lane@abtalks.dev',
+    password: 'Password123!',
     avatar: '',
     level: 15,
     xp: 3120,
@@ -81,6 +84,7 @@ const mockStudentsToSeed = [
   {
     name: 'Alex Rivera',
     email: 'alex.rivera@abtalks.dev',
+    password: 'Password123!',
     avatar: '',
     level: 12,
     xp: 2450,
@@ -101,6 +105,7 @@ const mockStudentsToSeed = [
   {
     name: 'Priya Sharma',
     email: 'priya.sharma@abtalks.dev',
+    password: 'Password123!',
     avatar: '',
     level: 10,
     xp: 2210,
@@ -136,8 +141,8 @@ export const seedDatabase = async () => {
     await Progress.deleteMany({})
     await Mission.deleteMany({})
 
-    // Seed students
-    const createdStudents = await Student.insertMany(mockStudentsToSeed)
+    // Seed students with password hashing
+    const createdStudents = await Student.create(mockStudentsToSeed)
     const alexRivera = createdStudents.find((s) => s.email === 'alex.rivera@abtalks.dev')
 
     // Seed challenge

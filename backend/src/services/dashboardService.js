@@ -6,9 +6,15 @@ import Progress from '../models/Progress.js'
 import Mission from '../models/Mission.js'
 import { getNextLevelInfo } from '../config/gamification.js'
 
-export const getDashboardData = async () => {
+export const getDashboardData = async (authenticatedUserId = null) => {
   try {
-    let student = await Student.findOne({ email: 'alex.rivera@abtalks.dev' })
+    let student = null
+    if (authenticatedUserId) {
+      student = await Student.findById(authenticatedUserId)
+    }
+    if (!student) {
+      student = await Student.findOne({ email: 'alex.rivera@abtalks.dev' })
+    }
     if (!student) {
       student = await Student.findOne()
     }
@@ -25,7 +31,7 @@ export const getDashboardData = async () => {
     // Get all students sorted by XP for dynamic rankings
     const allStudentsSorted = await Student.find().sort({ xp: -1 })
     const myRankIndex = allStudentsSorted.findIndex((s) => s._id.toString() === studentId.toString())
-    const myRank = myRankIndex !== -1 ? myRankIndex + 1 : 4
+    const myRank = myRankIndex !== -1 ? myRankIndex + 1 : 1
 
     if (student.rank !== myRank) {
       student.rank = myRank
@@ -39,7 +45,7 @@ export const getDashboardData = async () => {
       avatar: s.avatar,
       weeklyChange: s.weeklyChange || '+0',
       topPercentage: idx === 0 ? 'Top 1%' : idx === 1 ? 'Top 2%' : idx === 2 ? 'Top 3%' : idx === 3 ? 'Top 5%' : 'Top 8%',
-      isYou: s.email === 'alex.rivera@abtalks.dev',
+      isYou: s._id.toString() === studentId.toString(),
     }))
 
     const achievements = await Achievement.find({ studentId })

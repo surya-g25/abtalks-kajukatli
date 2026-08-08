@@ -7,31 +7,30 @@ import Button from '@/components/ui/Button'
 import GlassCard from '@/components/cards/GlassCard'
 import Input from '@/components/ui/Input'
 
-export function ProfileHeader({
-  student = {
-    name: 'Alex Rivera',
+export function ProfileHeader({ student, onUpdateProfile }) {
+  const currentStudent = student || {
+    name: 'Developer',
     avatar: '',
-    level: 12,
-    xp: 2450,
-    rank: 4,
-    college: 'Stanford University • ABTalks Academy',
-    github: 'alexrivera',
-    linkedin: 'alexrivera',
-    portfolio: 'alexrivera.dev',
-    currentStreak: 14,
-    joinedSince: 'Oct 2026',
+    level: 1,
+    xp: 0,
+    rank: 1,
+    college: 'ABTalks Cohort Academy',
+    github: 'developer',
+    linkedin: 'developer',
+    portfolio: 'developer.dev',
+    currentStreak: 0,
+    joinedSince: 'Recently',
     title: 'Code Alchemist',
-  },
-  onUpdateProfile,
-}) {
+  }
+
   const [showEditModal, setShowEditModal] = useState(false)
   const [formData, setFormData] = useState({
-    name: student.name,
-    college: student.college,
-    github: student.github,
-    linkedin: student.linkedin,
-    portfolio: student.portfolio,
-    bio: 'Full-stack React & Node.js Developer in ABTalks cohort.',
+    name: currentStudent.name,
+    college: currentStudent.college,
+    github: currentStudent.github,
+    linkedin: currentStudent.linkedin,
+    portfolio: currentStudent.portfolio,
+    bio: currentStudent.bio || 'Full-stack developer in ABTalks cohort.',
   })
 
   const handleSave = (e) => {
@@ -51,8 +50,8 @@ export function ProfileHeader({
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
           <div className="relative group">
             <Avatar
-              src={student.avatar}
-              alt={student.name}
+              src={currentStudent.avatar}
+              alt={currentStudent.name}
               size="xl"
               className="ring-4 ring-amber-500/30 shadow-2xl group-hover:scale-105 transition-transform duration-300"
             />
@@ -62,69 +61,69 @@ export function ProfileHeader({
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2.5">
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {student.name}
+                {currentStudent.name}
               </h1>
               <Badge variant="warning" className="px-2.5 py-0.5 text-xs font-black uppercase tracking-wider">
-                Lv. {student.level} • {student.title}
+                Lv. {currentStudent.level} • {currentStudent.title}
               </Badge>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                Rank #{student.rank}
+                Rank #{currentStudent.rank}
               </span>
             </div>
 
             <p className="text-xs sm:text-sm text-neutral-300 flex items-center gap-2 font-medium">
               <Icon name="GraduationCap" size={16} className="text-amber-400 shrink-0" />
-              <span>{student.college}</span>
+              <span>{currentStudent.college}</span>
             </p>
 
             <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-neutral-400 pt-1">
               <div className="flex items-center gap-1.5 text-amber-400 font-extrabold">
                 <Icon name="Flame" size={15} />
-                <span>{student.currentStreak} Day Streak</span>
+                <span>{currentStudent.currentStreak} Day Streak</span>
               </div>
               <span className="text-neutral-700">•</span>
               <div className="flex items-center gap-1.5">
                 <Icon name="Zap" size={15} className="text-amber-400" />
-                <span className="font-mono text-white font-bold">{student.xp.toLocaleString()} XP</span>
+                <span className="font-mono text-white font-bold">{(currentStudent.xp || 0).toLocaleString()} XP</span>
               </div>
               <span className="text-neutral-700">•</span>
               <div className="flex items-center gap-1 text-neutral-400">
                 <Icon name="Calendar" size={14} />
-                <span>Joined {student.joinedSince}</span>
+                <span>Joined {currentStudent.joinedSince}</span>
               </div>
             </div>
 
             {/* Social Links */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href={`https://github.com/${student.github}`}
+                href={`https://github.com/${currentStudent.github}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition text-xs font-semibold"
               >
                 <Icon name="Github" size={14} />
-                <span>github.com/{student.github}</span>
+                <span>github.com/{currentStudent.github}</span>
               </a>
 
               <a
-                href={`https://linkedin.com/in/${student.linkedin}`}
+                href={`https://linkedin.com/in/${currentStudent.linkedin}`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition text-xs font-semibold"
               >
                 <Icon name="Linkedin" size={14} />
-                <span>linkedin.com/in/{student.linkedin}</span>
+                <span>linkedin.com/in/{currentStudent.linkedin}</span>
               </a>
 
-              {student.portfolio && (
+              {currentStudent.portfolio && (
                 <a
-                  href={`https://${student.portfolio}`}
+                  href={`https://${currentStudent.portfolio}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-amber-400 hover:text-amber-300 transition text-xs font-semibold"
                 >
                   <Icon name="Globe" size={14} />
-                  <span>{student.portfolio}</span>
+                  <span>{currentStudent.portfolio}</span>
                 </a>
               )}
             </div>

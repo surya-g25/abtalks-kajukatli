@@ -55,10 +55,11 @@ export default function LeaderboardPage() {
     const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase())
     if (!matchesSearch) return false
 
-    if (selectedCollege === 'stanford') return student.name.includes('Sarah') || student.name.includes('Alex')
-    if (selectedCollege === 'mit') return student.name.includes('Marcus')
+    if (selectedCollege === 'all') return true
     if (selectedCollege === 'abtalks') return true
-    if (selectedCollege === 'berkeley') return student.name.includes('Priya') || student.name.includes('Devon')
+    if (student.college) {
+      return student.college.toLowerCase().includes(selectedCollege.toLowerCase())
+    }
     return true
   })
 

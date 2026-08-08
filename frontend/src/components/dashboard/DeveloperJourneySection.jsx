@@ -1,50 +1,43 @@
 import JourneyTimeline from '@/components/timeline/JourneyTimeline'
 import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
+import { useAuth } from '@/context/AuthContext'
 
 export function DeveloperJourneySection() {
+  const { user } = useAuth()
+  const level = user?.level || 1
+  const streak = user?.currentStreak || 0
+  const xp = user?.xp || 0
+  const joinedDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Active Member'
+
   const stages = [
     {
       title: 'Joined ABTalks Platform',
-      description: 'Setup developer profile & connected GitHub account.',
-      date: 'Oct 01, 2026',
+      description: 'Setup developer profile & connected account.',
+      date: joinedDate,
       status: 'completed',
       iconName: 'UserCheck',
     },
     {
       title: 'Solved First Challenge',
-      description: 'Successfully passed automated unit tests for JavaScript Basics.',
-      date: 'Oct 02, 2026',
-      status: 'completed',
+      description: 'Passed initial coding missions.',
+      date: 'Completed',
+      status: xp > 0 ? 'completed' : 'upcoming',
       iconName: 'Code',
     },
     {
-      title: 'Reached 7-Day Streak',
-      description: 'Unlocked "7-Day Warrior" badge & +100 Bonus XP.',
-      date: 'Oct 09, 2026',
-      status: 'completed',
+      title: 'Streak Milestone',
+      description: `Built an active ${streak} day learning streak.`,
+      date: streak > 0 ? 'Active' : 'Pending',
+      status: streak >= 3 ? 'completed' : streak > 0 ? 'active' : 'upcoming',
       iconName: 'Flame',
     },
     {
-      title: 'Earned 1,000 XP Milestone',
-      description: 'Promoted to Level 5 Intermediate Developer.',
-      date: 'Oct 15, 2026',
-      status: 'completed',
-      iconName: 'Zap',
-    },
-    {
-      title: 'Entered Top 20% Leaderboard',
-      description: 'Outranked 80% of active cohort participants.',
-      date: 'Oct 22, 2026',
-      status: 'completed',
-      iconName: 'Trophy',
-    },
-    {
-      title: 'Level 12 Code Alchemist (Today)',
-      description: 'Currently solving React Async Custom Hooks & auto-retry logic.',
+      title: `Level ${level} Developer (Current)`,
+      description: `Accumulated ${xp.toLocaleString()} total XP.`,
       date: 'Today',
       status: 'active',
-      iconName: 'Target',
+      iconName: 'Zap',
     },
   ]
 
@@ -56,7 +49,7 @@ export function DeveloperJourneySection() {
           <h3 className="text-lg font-black text-white tracking-tight">Developer Journey</h3>
         </div>
         <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full">
-          Level 12 Journey
+          Level {level} Journey
         </span>
       </div>
 

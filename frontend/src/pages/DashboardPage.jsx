@@ -15,7 +15,10 @@ import QuickActionsToolbar from '@/components/dashboard/QuickActionsToolbar'
 import { fetchDashboardData } from '@/services/dashboardService'
 import { DashboardSkeleton } from '@/components/ui/Skeletons'
 
+import { useAuth } from '@/context/AuthContext'
+
 export default function DashboardPage() {
+  const { user: authUser } = useAuth()
   const [dashboardData, setDashboardData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -51,17 +54,17 @@ export default function DashboardPage() {
     )
   }
 
-  // Fallbacks if backend response lacks data
+  // Dynamic user data from DB or auth context
   const student = dashboardData?.student || {
-    name: 'Alex Rivera',
-    avatar: '',
-    level: 12,
-    xp: 2450,
-    title: 'Code Alchemist',
-    currentStreak: 14,
-    longestStreak: 21,
-    streakFreeze: { active: 1, available: 2 },
-    xpInCurrentLevel: 850,
+    name: authUser?.name || 'Developer',
+    avatar: authUser?.avatar || '',
+    level: authUser?.level || 1,
+    xp: authUser?.xp || 0,
+    title: authUser?.title || 'Code Alchemist',
+    currentStreak: authUser?.currentStreak || 0,
+    longestStreak: authUser?.longestStreak || 0,
+    streakFreeze: authUser?.streakFreeze || { active: 0, available: 0 },
+    xpInCurrentLevel: (authUser?.xp || 0) % 1000,
     xpForNextLevel: 1000,
   }
 
@@ -69,17 +72,17 @@ export default function DashboardPage() {
   const leaderboard = dashboardData?.leaderboard || []
   const achievements = dashboardData?.achievements || []
   const statistics = dashboardData?.statistics || {
-    completedChallenges: 28,
-    githubCommits: 142,
-    linkedinPosts: 18,
-    hoursStudied: 64.5,
-    xpEarned: 2450,
-    averageCompletionRate: 94,
+    completedChallenges: 0,
+    githubCommits: 0,
+    linkedinPosts: 0,
+    hoursStudied: 0,
+    xpEarned: student.xp || 0,
+    averageCompletionRate: 0,
   }
   const progress = dashboardData?.progress || {
-    activeDays: 42,
-    missedDays: 3,
-    currentStreak: 14,
+    activeDays: student.currentStreak || 0,
+    missedDays: 0,
+    currentStreak: student.currentStreak || 0,
     weeklyActivity: [],
     heatmapData: [],
   }

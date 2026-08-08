@@ -5,17 +5,33 @@ import Icon from '@/components/common/Icon'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 
-export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', level: 12, xp: 2450 } }) {
+import { fetchNotifications } from '@/services/notificationService'
+
+export function DashboardHeader({ user }) {
+  const currentUser = user || { name: 'Developer', avatar: '', level: 1, xp: 0 }
   const [showNotifications, setShowNotifications] = useState(false)
   const [showSearchModal, setShowSearchModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [greeting, setGreeting] = useState('Welcome back')
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const hour = new Date().getHours()
     if (hour < 12) setGreeting('Good morning')
     else if (hour < 18) setGreeting('Good afternoon')
     else setGreeting('Good evening')
+  }, [])
+
+  useEffect(() => {
+    async function loadNotifications() {
+      const res = await fetchNotifications()
+      if (res && res.notifications) {
+        setNotifications(res.notifications)
+        setUnreadCount(res.unreadCount || 0)
+      }
+    }
+    loadNotifications()
   }, [])
 
   // Keyboard shortcut Cmd+K / Ctrl+K trigger
@@ -29,12 +45,6 @@ export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', leve
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
-
-  const mockNotifications = [
-    { id: 1, title: 'Streak Milestone!', text: 'You hit a 14-day streak. 🔥', time: '10m ago', unread: true },
-    { id: 2, title: 'Achievement Unlocked', text: 'Earned "Night Owl" badge.', time: '2h ago', unread: true },
-    { id: 3, title: 'Leaderboard Update', text: 'You moved up 2 spots to #4!', time: '1d ago', unread: false },
-  ]
 
   const quickLinks = [
     { title: "Today's Mission", icon: 'Target', route: '/dashboard' },
@@ -60,8 +70,8 @@ export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', leve
           <div className="relative group">
             <Link to="/profile">
               <Avatar
-                src={user.avatar}
-                alt={user.name}
+                src={currentUser.avatar}
+                alt={currentUser.name}
                 size="lg"
                 className="ring-4 ring-amber-500/20 hover:ring-amber-500/50 transition-all duration-300 transform group-hover:scale-105"
               />
@@ -72,16 +82,16 @@ export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', leve
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                {greeting}, {user.name.split(' ')[0]}! <span className="inline-block animate-bounce">👋</span>
+                {greeting}, {currentUser.name ? currentUser.name.split(' ')[0] : 'Developer'}! <span className="inline-block animate-bounce">👋</span>
               </h1>
               <Badge variant="warning" className="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider">
-                Lv. {user.level} • Code Alchemist
+                Lv. {currentUser.level || 1} • {currentUser.title || 'Code Alchemist'}
               </Badge>
             </div>
             <p className="text-xs text-neutral-400 mt-1 flex items-center gap-2">
               <span>Ready to crush today's mission?</span>
               <span className="w-1 h-1 rounded-full bg-neutral-600" />
-              <span className="text-amber-400 font-mono font-bold">{user.xp.toLocaleString()} XP</span>
+              <span className="text-amber-400 font-mono font-bold">{(currentUser.xp || 0).toLocaleString()} XP</span>
             </p>
           </div>
         </div>
@@ -111,7 +121,9 @@ export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', leve
               aria-label="Notifications"
             >
               <Icon name="Bell" size={18} />
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-neutral-950 animate-pulse" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-neutral-950 animate-pulse" />
+              )}
             </button>
 
             {/* Notifications Popover */}
@@ -126,26 +138,32 @@ export function DashboardHeader({ user = { name: 'Alex Rivera', avatar: '', leve
                   <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
                     <span className="text-xs font-extrabold text-white uppercase tracking-wider">Notifications</span>
                     <span className="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full">
-                      2 Unread
+                      {unreadCount} Unread
                     </span>
                   </div>
                   <div className="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1">
-                    {mockNotifications.map((n) => (
-                      <div
-                        key={n.id}
-                        className={`p-3 rounded-xl border text-xs transition ${
-                          n.unread
-                            ? 'bg-neutral-800/80 border-amber-500/30 text-white'
-                            : 'bg-neutral-900/50 border-neutral-800/80 text-neutral-400'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-amber-400">{n.title}</span>
-                          <span className="text-[10px] text-neutral-500">{n.time}</span>
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-neutral-500 p-2 text-center">No notifications yet.</p>
+                    ) : (
+                      notifications.map((n) => (
+                        <div
+                          key={n._id || n.id}
+                          className={`p-3 rounded-xl border text-xs transition ${
+                            !n.read
+                              ? 'bg-neutral-800/80 border-amber-500/30 text-white'
+                              : 'bg-neutral-900/50 border-neutral-800/80 text-neutral-400'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-amber-400">{n.title}</span>
+                            <span className="text-[10px] text-neutral-500">
+                              {n.createdAt ? new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-neutral-300">{n.message || n.text}</p>
                         </div>
-                        <p className="mt-1 text-neutral-300">{n.text}</p>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                   <div className="mt-3 pt-2 border-t border-neutral-800 text-center">
                     <button

@@ -4,21 +4,13 @@ import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
 
 export function LeaderboardSection({ leaderboard, student }) {
-  const defaultStudents = [
-    { rank: 1, name: 'Sarah Chen', points: '3,890', avatar: '', weeklyChange: '+1', topPercentage: 'Top 1%' },
-    { rank: 2, name: 'Marcus Vance', points: '3,450', avatar: '', weeklyChange: '+0', topPercentage: 'Top 2%' },
-    { rank: 3, name: 'Devon Lane', points: '3,120', avatar: '', weeklyChange: '-1', topPercentage: 'Top 3%' },
-    { rank: 4, name: 'Alex Rivera (You)', points: '2,450', avatar: '', weeklyChange: '+2', topPercentage: 'Top 5%', isYou: true },
-    { rank: 5, name: 'Priya Sharma', points: '2,210', avatar: '', weeklyChange: '+1', topPercentage: 'Top 8%' },
-  ]
-
-  const topStudents = leaderboard && leaderboard.length > 0 ? leaderboard : defaultStudents
+  const topStudents = Array.isArray(leaderboard) ? leaderboard : []
 
   // Find user's dynamic rank
   const myLeaderboardInfo = topStudents.find((s) => s.isYou) || {
-    rank: student?.rank || 4,
-    weeklyChange: student?.weeklyChange || '+2',
-    topPercentage: 'Top 5%',
+    rank: student?.rank || 1,
+    weeklyChange: student?.weeklyChange || '+0',
+    topPercentage: 'Top 10%',
   }
 
   // Display top 5 students in leaderboard preview

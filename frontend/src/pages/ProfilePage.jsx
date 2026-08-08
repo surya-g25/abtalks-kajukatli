@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PageWrapper from '@/components/layout-primitives/PageWrapper'
 import ProfileHeader from '@/components/profile/ProfileHeader'
 import DeveloperIdentityCard from '@/components/profile/DeveloperIdentityCard'
@@ -7,25 +7,57 @@ import AchievementGallery from '@/components/profile/AchievementGallery'
 import ProfileContributionHeatmap from '@/components/profile/ProfileContributionHeatmap'
 import ProfileAnalyticsSection from '@/components/profile/ProfileAnalyticsSection'
 import PublicPortfolioSection from '@/components/profile/PublicPortfolioSection'
+import { useAuth } from '@/context/AuthContext'
+import * as authService from '@/services/authService'
+import { toast } from 'sonner'
 
 export default function ProfilePage() {
+  const { user, updateUser } = useAuth()
+
   const [student, setStudent] = useState({
-    name: 'Alex Rivera',
-    avatar: '',
-    level: 12,
-    xp: 2450,
-    rank: 4,
-    college: 'Stanford University • ABTalks Academy',
-    github: 'alexrivera',
-    linkedin: 'alexrivera',
-    portfolio: 'alexrivera.dev',
-    currentStreak: 14,
-    joinedSince: 'Oct 2026',
-    title: 'Code Alchemist',
+    name: user?.name || 'Developer',
+    avatar: user?.avatar || '',
+    level: user?.level || 1,
+    xp: user?.xp || 0,
+    rank: user?.rank || 1,
+    college: 'ABTalks Cohort Academy',
+    github: user?.github || 'developer',
+    linkedin: user?.linkedin || 'developer',
+    portfolio: user?.portfolio || 'developer.dev',
+    currentStreak: user?.currentStreak || 0,
+    joinedSince: user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Active Member',
+    title: user?.title || 'Code Alchemist',
   })
 
-  const handleUpdateProfile = (updatedFields) => {
-    setStudent((prev) => ({ ...prev, ...updatedFields }))
+  useEffect(() => {
+    if (user) {
+      setStudent({
+        name: user.name || 'Developer',
+        avatar: user.avatar || '',
+        level: user.level || 1,
+        xp: user.xp || 0,
+        rank: user.rank || 1,
+        college: 'ABTalks Cohort Academy',
+        github: user.github || 'developer',
+        linkedin: user.linkedin || 'developer',
+        portfolio: user.portfolio || 'developer.dev',
+        currentStreak: user.currentStreak || 0,
+        joinedSince: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Active Member',
+        title: user.title || 'Code Alchemist',
+      })
+    }
+  }, [user])
+
+  const handleUpdateProfile = async (updatedFields) => {
+    try {
+      const updated = await authService.updateProfile(updatedFields)
+      setStudent((prev) => ({ ...prev, ...updated }))
+      updateUser(updated)
+      toast.success('Profile updated successfully!')
+    } catch (err) {
+      console.error('Failed to update profile:', err)
+      toast.error(err.message || 'Profile update failed')
+    }
   }
 
   return (
