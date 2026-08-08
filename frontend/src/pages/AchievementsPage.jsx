@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import PageWrapper from '@/components/layout-primitives/PageWrapper'
 import GlassCard from '@/components/cards/GlassCard'
 import Icon from '@/components/common/Icon'
-import Badge from '@/components/ui/Badge'
 import LinearProgress from '@/components/progress/LinearProgress'
 import apiClient from '@/api/apiClient'
 

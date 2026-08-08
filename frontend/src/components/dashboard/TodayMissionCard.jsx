@@ -8,22 +8,19 @@ import GlassCard from '@/components/cards/GlassCard'
 import { updateChallengeProgress } from '@/services/challengeService'
 
 export function TodayMissionCard({ challenge }) {
-  const defaultTasks = [
-    { id: 1, text: 'Read Problem Statement & Requirements', completed: true },
-    { id: 2, text: 'Write Custom useAsync Hook Logic', completed: true },
-    { id: 3, text: 'Test Exponential Backoff & Auto-retry', completed: true },
-    { id: 4, text: 'Push Commits to GitHub Repository', completed: true },
-    { id: 5, text: 'Post Reflection on LinkedIn (#ABTalks)', completed: false },
-  ]
-
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
     if (challenge && challenge.tasks) {
-      // Map schema task text to local task item text field
       setTasks(challenge.tasks.map((t) => ({ id: t.id, text: t.text, completed: t.completed })))
     } else {
-      setTasks(defaultTasks)
+      setTasks([
+        { id: 1, text: 'Read Problem Statement & Requirements', completed: true },
+        { id: 2, text: 'Write Custom useAsync Hook Logic', completed: true },
+        { id: 3, text: 'Test Exponential Backoff & Auto-retry', completed: true },
+        { id: 4, text: 'Push Commits to GitHub Repository', completed: true },
+        { id: 5, text: 'Post Reflection on LinkedIn (#ABTalks)', completed: false },
+      ])
     }
   }, [challenge])
 

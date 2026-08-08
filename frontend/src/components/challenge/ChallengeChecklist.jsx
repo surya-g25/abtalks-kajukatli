@@ -5,24 +5,22 @@ import GlassCard from '@/components/cards/GlassCard'
 import { updateChallengeProgress } from '@/services/challengeService'
 
 export function ChallengeChecklist({ challenge, onProgressUpdate }) {
-  const defaultTasks = [
-    { id: 1, label: 'Read Instructions & Requirements Spec', completed: true },
-    { id: 2, label: 'Setup React Project Boilerplate & Files', completed: true },
-    { id: 3, label: 'Write useAsync Hook State Machine Logic', completed: true },
-    { id: 4, label: 'Implement Exponential Backoff Retry Policy', completed: true },
-    { id: 5, label: 'Run Unit Tests & Verify AbortController', completed: true },
-    { id: 6, label: 'Push Commits to Public GitHub Repository', completed: true },
-    { id: 7, label: 'Post Learning Reflection on LinkedIn (#ABTalks)', completed: false },
-    { id: 8, label: 'Submit Final Code & Claim XP Reward', completed: false },
-  ]
-
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
     if (challenge && challenge.tasks) {
       setTasks(challenge.tasks.map((t) => ({ id: t.id, label: t.text, completed: t.completed })))
     } else {
-      setTasks(defaultTasks)
+      setTasks([
+        { id: 1, label: 'Read Instructions & Requirements Spec', completed: true },
+        { id: 2, label: 'Setup React Project Boilerplate & Files', completed: true },
+        { id: 3, label: 'Write useAsync Hook State Machine Logic', completed: true },
+        { id: 4, label: 'Implement Exponential Backoff Retry Policy', completed: true },
+        { id: 5, label: 'Run Unit Tests & Verify AbortController', completed: true },
+        { id: 6, label: 'Push Commits to Public GitHub Repository', completed: true },
+        { id: 7, label: 'Post Learning Reflection on LinkedIn (#ABTalks)', completed: false },
+        { id: 8, label: 'Submit Final Code & Claim XP Reward', completed: false },
+      ])
     }
   }, [challenge])
 

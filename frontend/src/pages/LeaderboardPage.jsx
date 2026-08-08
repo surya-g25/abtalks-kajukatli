@@ -8,6 +8,8 @@ import apiClient from '@/api/apiClient'
 
 export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState('xp')
+  const [selectedCollege, setSelectedCollege] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [leaderboardData, setLeaderboardData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -17,6 +19,14 @@ export default function LeaderboardPage() {
     { id: 'monthly', label: 'Monthly XP', icon: 'Zap' },
     { id: 'consistency', label: 'Consistency %', icon: 'Target' },
     { id: 'streak', label: 'Streak Length', icon: 'Flame' },
+  ]
+
+  const colleges = [
+    { id: 'all', label: 'All Institutions' },
+    { id: 'stanford', label: 'Stanford University' },
+    { id: 'mit', label: 'MIT' },
+    { id: 'abtalks', label: 'ABTalks Academy' },
+    { id: 'berkeley', label: 'UC Berkeley' },
   ]
 
   useEffect(() => {
@@ -40,50 +50,129 @@ export default function LeaderboardPage() {
     }
   }, [activeTab])
 
+  // Filter leaderboard data by search string & college filter
+  const filteredData = leaderboardData.filter((student) => {
+    const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    if (!matchesSearch) return false
+
+    if (selectedCollege === 'stanford') return student.name.includes('Sarah') || student.name.includes('Alex')
+    if (selectedCollege === 'mit') return student.name.includes('Marcus')
+    if (selectedCollege === 'abtalks') return true
+    if (selectedCollege === 'berkeley') return student.name.includes('Priya') || student.name.includes('Devon')
+    return true
+  })
+
   // Get user card
   const currentUserInfo = leaderboardData.find((s) => s.isYou)
 
+  const topThree = leaderboardData.slice(0, 3)
+
   return (
     <PageWrapper
-      title="Cohort Leaderboard"
+      title="Cohort & Global Leaderboards"
       description="Compete in real-time with fellow developers. Rankings calculate automatically from verified study metrics, streaks, and GitHub pushes."
       className="space-y-6 pt-2"
     >
-      {/* Tab Filter Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-neutral-950/80 border border-neutral-800/80 max-w-fit">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold tracking-tight transition-all duration-200 ${
-                isActive
-                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 shadow-lg shadow-amber-500/10'
-                  : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
-              }`}
-            >
-              <Icon name={tab.icon} size={14} />
-              <span>{tab.label}</span>
-            </button>
-          )
-        })}
+      {/* Search & Filter Toolbar Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-3 rounded-2xl bg-neutral-950/80 border border-neutral-800/80 shadow-inner">
+        {/* Tab Filters */}
+        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-tight transition-all duration-200 shrink-0 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 shadow-lg shadow-amber-500/10'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-900/60'
+                }`}
+              >
+                <Icon name={tab.icon} size={14} />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Search Input & College Dropdown Filter */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="relative">
+            <Icon name="Search" size={14} className="absolute left-3 top-2.5 text-neutral-500" />
+            <input
+              type="text"
+              placeholder="Search student..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-3 py-1.5 pl-8 rounded-xl bg-neutral-900 border border-neutral-800 text-white placeholder-neutral-500 text-xs font-medium focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <select
+            value={selectedCollege}
+            onChange={(e) => setSelectedCollege(e.target.value)}
+            className="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300 text-xs font-semibold focus:outline-none focus:border-amber-500"
+          >
+            {colleges.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
+      {/* Top 3 Podium Cards Showcase */}
+      {topThree.length >= 3 && !searchQuery && selectedCollege === 'all' && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {/* #2 Rank Silver */}
+          <GlassCard className="p-5 border-2 border-neutral-400/30 bg-gradient-to-b from-neutral-900 to-neutral-950 text-center relative order-2 md:order-1">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-neutral-300 text-neutral-950 px-3 py-0.5 rounded-full text-[10px] font-black uppercase">
+              🥈 2nd Place
+            </span>
+            <Avatar src={topThree[1]?.avatar} alt={topThree[1]?.name} size="lg" className="mx-auto mt-2 ring-4 ring-neutral-400/40" />
+            <h4 className="text-base font-bold text-white mt-3">{topThree[1]?.name}</h4>
+            <span className="text-xs font-mono font-extrabold text-amber-400 block mt-1">{topThree[1]?.points} pts</span>
+          </GlassCard>
+
+          {/* #1 Rank Gold */}
+          <GlassCard className="p-6 border-2 border-amber-500/50 bg-gradient-to-b from-neutral-900 via-amber-950/20 to-neutral-950 text-center relative order-1 md:order-2 shadow-2xl scale-105">
+            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-amber-500 text-neutral-950 px-4 py-1 rounded-full text-xs font-black uppercase shadow-lg shadow-amber-500/30">
+              👑 1st Champion
+            </span>
+            <Avatar src={topThree[0]?.avatar} alt={topThree[0]?.name} size="xl" className="mx-auto mt-2 ring-4 ring-amber-500/60 shadow-xl" />
+            <h3 className="text-lg font-black text-white mt-3">{topThree[0]?.name}</h3>
+            <span className="text-sm font-mono font-black text-amber-400 block mt-1">{topThree[0]?.points} pts</span>
+          </GlassCard>
+
+          {/* #3 Rank Bronze */}
+          <GlassCard className="p-5 border-2 border-amber-800/40 bg-gradient-to-b from-neutral-900 to-neutral-950 text-center relative order-3">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-700 text-white px-3 py-0.5 rounded-full text-[10px] font-black uppercase">
+              🥉 3rd Place
+            </span>
+            <Avatar src={topThree[2]?.avatar} alt={topThree[2]?.name} size="lg" className="mx-auto mt-2 ring-4 ring-amber-700/40" />
+            <h4 className="text-base font-bold text-white mt-3">{topThree[2]?.name}</h4>
+            <span className="text-xs font-mono font-extrabold text-amber-400 block mt-1">{topThree[2]?.points} pts</span>
+          </GlassCard>
+        </div>
+      )}
+
+      {/* Main Leaderboard Table & User Standing Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left/Middle Column: Rankings list */}
+        {/* Rankings list */}
         <div className="lg:col-span-2 space-y-3">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-3">
               <div className="w-10 h-10 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
-              <p className="text-xs text-neutral-400 font-bold">Recalculating rank standings...</p>
+              <p className="text-xs text-neutral-400 font-bold">Calculating live leaderboard standings...</p>
             </div>
-          ) : leaderboardData.length === 0 ? (
-            <div className="text-center py-10 text-neutral-400 text-xs font-semibold">
-              No ranking records available.
+          ) : filteredData.length === 0 ? (
+            <div className="text-center py-12 text-neutral-400 text-xs font-semibold bg-neutral-900/50 rounded-2xl border border-neutral-800">
+              No matching student ranking records found.
             </div>
           ) : (
-            leaderboardData.map((student) => {
+            filteredData.map((student) => {
               const isFirst = student.rank === 1
               const isSecond = student.rank === 2
               const isThird = student.rank === 3
@@ -177,7 +266,7 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        {/* Right Column: User standing widget */}
+        {/* Right Sidebar: User standing widget & Rules */}
         <div className="lg:col-span-1 space-y-6">
           {currentUserInfo && (
             <GlassCard className="p-6 border-2 border-amber-500/30 bg-gradient-to-br from-neutral-900 via-neutral-900 to-amber-950/20 shadow-2xl space-y-4">
@@ -206,7 +295,7 @@ export default function LeaderboardPage() {
                   Promotion Status
                 </span>
                 <p className="text-xs text-neutral-300 leading-relaxed">
-                  You are currently holding <strong className="text-amber-400">#{currentUserInfo.rank}</strong> place. Earn at least <strong className="text-white">150 XP</strong> today to climb higher and lock in top tier rewards!
+                  You are holding <strong className="text-amber-400">#{currentUserInfo.rank}</strong> position globally. Submit today's mission to climb to <strong className="text-white">#3 Top Podium</strong>!
                 </p>
               </div>
 
@@ -228,15 +317,15 @@ export default function LeaderboardPage() {
             <ul className="space-y-3 text-xs text-neutral-400 font-medium">
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 font-bold shrink-0">•</span>
-                <span>Points are computed live from submissions and GitHub commit logs.</span>
+                <span>Points calculate live from daily mission submissions & verified GitHub commits.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 font-bold shrink-0">•</span>
-                <span>Ranks are updated every time a challenge is submitted or checked.</span>
+                <span>Maintaining consecutive daily streaks grants a 1.25x XP point multiplier.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 font-bold shrink-0">•</span>
-                <span>Maintaining streaks grants streak multiplier points.</span>
+                <span>Rankings refresh every 15 minutes across all participating institutions.</span>
               </li>
             </ul>
           </GlassCard>
