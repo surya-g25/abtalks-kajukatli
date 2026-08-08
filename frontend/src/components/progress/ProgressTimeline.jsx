@@ -1,4 +1,3 @@
-import Icon from '@/components/common/Icon'
 import { cn } from '@/utils/cn'
 
 export function ProgressTimeline({
