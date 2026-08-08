@@ -1,58 +1,98 @@
+/* eslint-disable react/only-export-components */
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import LandingLayout from '@/layouts/LandingLayout'
 import AppLayout from '@/layouts/AppLayout'
 import ErrorLayout from '@/layouts/ErrorLayout'
+import LoadingScreen from '@/components/common/LoadingScreen'
 
-import LandingPage from '@/pages/LandingPage'
-import DashboardPage from '@/pages/DashboardPage'
-import ChallengesPage from '@/pages/ChallengesPage'
-import LeaderboardPage from '@/pages/LeaderboardPage'
-import ProfilePage from '@/pages/ProfilePage'
-import AchievementsPage from '@/pages/AchievementsPage'
-import SettingsPage from '@/pages/SettingsPage'
-import NotFoundPage from '@/pages/NotFoundPage'
+// Lazy loaded page components
+const LandingPage = lazy(() => import('@/pages/LandingPage'))
+const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
+const ChallengesPage = lazy(() => import('@/pages/ChallengesPage'))
+const LeaderboardPage = lazy(() => import('@/pages/LeaderboardPage'))
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
+const AchievementsPage = lazy(() => import('@/pages/AchievementsPage'))
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 export const router = createBrowserRouter([
   // Public Landing Routes
   {
     path: '/',
     element: <LandingLayout />,
-    errorElement: <NotFoundPage />,
+    errorElement: (
+      <Suspense fallback={<LoadingScreen />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
     children: [
       {
         index: true,
-        element: <LandingPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <LandingPage />
+          </Suspense>
+        ),
       },
     ],
   },
   // Application Main Routes (Shared App Shell Layout)
   {
     element: <AppLayout />,
-    errorElement: <NotFoundPage />,
+    errorElement: (
+      <Suspense fallback={<LoadingScreen />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
     children: [
       {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <DashboardPage />
+          </Suspense>
+        ),
       },
       {
         path: 'challenges',
-        element: <ChallengesPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <ChallengesPage />
+          </Suspense>
+        ),
       },
       {
         path: 'leaderboard',
-        element: <LeaderboardPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <LeaderboardPage />
+          </Suspense>
+        ),
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <ProfilePage />
+          </Suspense>
+        ),
       },
       {
         path: 'achievements',
-        element: <AchievementsPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <AchievementsPage />
+          </Suspense>
+        ),
       },
       {
         path: 'settings',
-        element: <SettingsPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <SettingsPage />
+          </Suspense>
+        ),
       },
     ],
   },
@@ -62,7 +102,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '*',
-        element: <NotFoundPage />,
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <NotFoundPage />
+          </Suspense>
+        ),
       },
     ],
   },
