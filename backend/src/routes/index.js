@@ -9,6 +9,7 @@ import achievementRoutes from './achievementRoutes.js'
 import statisticsRoutes from './statisticsRoutes.js'
 import progressRoutes from './progressRoutes.js'
 import missionRoutes from './missionRoutes.js'
+import aiRoutes from './aiRoutes.js'
 
 const router = Router()
 
@@ -22,5 +23,6 @@ router.use('/achievements', achievementRoutes)
 router.use('/statistics', statisticsRoutes)
 router.use('/progress', progressRoutes)
 router.use('/missions', missionRoutes)
+router.use('/ai', aiRoutes)
 
 export default router

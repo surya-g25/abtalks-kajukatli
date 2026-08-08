@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import Avatar from '@/components/ui/Avatar'
 import { mainNavigation } from '@/config/navigation'
 
-export function Header({ onMobileMenuToggle, user }) {
+export function Header({ onMobileMenuToggle, onAiToggle, user }) {
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-neutral-800/80 px-4 sm:px-6 lg:px-8 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -46,6 +46,17 @@ export function Header({ onMobileMenuToggle, user }) {
 
         {/* Right: Actions Placeholders (Theme, Notifications, Profile) */}
         <div className="flex items-center gap-2.5">
+          {/* Toggle AI Co-Pilot Drawer */}
+          <button
+            type="button"
+            onClick={onAiToggle}
+            className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-800/80 transition relative"
+            aria-label="Toggle AI Co-Pilot"
+            title="Toggle AI Co-Pilot Drawer"
+          >
+            <Icon name="Sparkles" size={18} className="text-purple-400 animate-pulse" />
+          </button>
+
           <button
             type="button"
             className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-800/80 transition"

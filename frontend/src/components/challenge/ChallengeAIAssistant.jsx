@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Icon from '@/components/common/Icon'
 import GlassCard from '@/components/cards/GlassCard'
 import Button from '@/components/ui/Button'
+import { generateAIContent } from '@/services/aiService'
 
 export function ChallengeAIAssistant() {
   const [activeOutput, setActiveOutput] = useState('')
@@ -9,34 +10,36 @@ export function ChallengeAIAssistant() {
   const [copied, setCopied] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const generateOutput = (type) => {
+  const generateOutput = async (type) => {
     setIsGenerating(true)
     setCopied(false)
 
-    setTimeout(() => {
-      setIsGenerating(false)
+    try {
+      // Map frontend action to backend prompt engine generator types
+      let aiType = type
+      if (type === 'explain') {
+        aiType = 'helper'
+      }
+
+      const text = await generateAIContent(aiType, { dayNumber: 14 }, true) // force refresh for in-challenge action
+
       if (type === 'linkedin') {
         setOutputTitle('Generated LinkedIn Post')
-        setActiveOutput(
-          `🚀 Day 14 of ABTalks Challenge: Built a Custom React Hook for Async Data Fetching with Auto-Retry!\n\nToday I mastered:\n✔ Managing loading, error, and success state transitions cleanly\n✔ Implementing exponential backoff algorithms for network retry policies\n✔ Preventing component unmount memory leaks using AbortController\n\nBig thanks to #ABTalks for the hands-on engineering challenges! 💻⚡\n#ReactJS #WebDevelopment #Frontend #JavaScript`
-        )
       } else if (type === 'summary') {
-        setOutputTitle('Today\'s Learning Summary')
-        setActiveOutput(
-          `• Abstracted complex promise resolution state machines into a reusable useAsync custom hook.\n• Controlled exponential delay math (e.g. 1s -> 2s -> 4s retry intervals).\n• Sealed memory leaks by connecting AbortSignal listeners to component unmount effects.`
-        )
+        setOutputTitle("Today's Learning Summary")
       } else if (type === 'resume') {
         setOutputTitle('Resume Accomplishment Bullet')
-        setActiveOutput(
-          `"Engineered a production-ready custom React hook (useAsync) with automated exponential backoff retries and AbortController request cancellation, reducing unhandled async UI errors by 35%."`
-        )
       } else if (type === 'explain') {
         setOutputTitle('Concept Explanation: Exponential Backoff')
-        setActiveOutput(
-          `Exponential backoff is a retry strategy that waits progressively longer between each attempt (e.g., 100ms, 200ms, 400ms, 800ms) to avoid overwhelming failing APIs during outages.`
-        )
       }
-    }, 600)
+
+      setActiveOutput(text || '')
+    } catch (err) {
+      console.error('Failed to generate challenge AI content', err)
+      setActiveOutput('Failed to fetch guidelines from AI. Please check your backend connection.')
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const copyToClipboard = () => {
@@ -58,7 +61,7 @@ export function ChallengeAIAssistant() {
             <span className="text-[10px] text-purple-300 font-semibold block">Instant Content & Learning Generators</span>
           </div>
         </div>
-        <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+        <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 animate-pulse">
           AI Helper Ready
         </span>
       </div>
