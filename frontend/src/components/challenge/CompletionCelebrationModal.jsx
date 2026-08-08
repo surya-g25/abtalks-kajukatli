@@ -1,10 +1,33 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Icon from '@/components/common/Icon'
 import Button from '@/components/ui/Button'
 import CompletionRing from '@/components/progress/CompletionRing'
+import ConfettiExplosion from '@/components/ui/ConfettiExplosion'
 
 export function CompletionCelebrationModal({ isOpen, onClose }) {
+  const [animatedXp, setAnimatedXp] = useState(0)
+
+  useEffect(() => {
+    if (isOpen) {
+      setAnimatedXp(0)
+      const target = 250
+      let current = 0
+      const increment = 10
+      const interval = setInterval(() => {
+        current += increment
+        if (current >= target) {
+          setAnimatedXp(target)
+          clearInterval(interval)
+        } else {
+          setAnimatedXp(current)
+        }
+      }, 30)
+      return () => clearInterval(interval)
+    }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   return (
@@ -17,6 +40,9 @@ export function CompletionCelebrationModal({ isOpen, onClose }) {
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="relative w-full max-w-lg bg-neutral-900 border-2 border-amber-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-center"
         >
+          {/* Confetti Explosion particles */}
+          <ConfettiExplosion />
+
           {/* Ambient Confetti Sparkle Aura */}
           <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
 
@@ -74,7 +100,7 @@ export function CompletionCelebrationModal({ isOpen, onClose }) {
           >
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-400 font-semibold">Total XP Earned</span>
-              <span className="text-lg font-mono font-black text-amber-400">+250 XP</span>
+              <span className="text-lg font-mono font-black text-amber-400">+{animatedXp} XP</span>
             </div>
             <div className="flex items-center justify-between text-xs pt-2 border-t border-neutral-800/80">
               <span className="text-neutral-400 font-semibold">Streak Maintained</span>

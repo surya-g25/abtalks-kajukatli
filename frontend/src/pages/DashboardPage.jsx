@@ -13,6 +13,7 @@ import DeveloperJourneySection from '@/components/dashboard/DeveloperJourneySect
 import DailyMotivationSection from '@/components/dashboard/DailyMotivationSection'
 import QuickActionsToolbar from '@/components/dashboard/QuickActionsToolbar'
 import { fetchDashboardData } from '@/services/dashboardService'
+import { DashboardSkeleton } from '@/components/ui/Skeletons'
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null)
@@ -45,10 +46,7 @@ export default function DashboardPage() {
         description="Please wait while we compile your real-time developer statistics."
         className="space-y-6 pt-2"
       >
-        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-          <div className="w-12 h-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-sm font-bold text-neutral-400">Loading gamification stats...</p>
-        </div>
+        <DashboardSkeleton />
       </PageWrapper>
     )
   }

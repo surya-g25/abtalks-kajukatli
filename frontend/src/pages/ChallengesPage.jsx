@@ -11,6 +11,7 @@ import ChallengeRewardPreview from '@/components/challenge/ChallengeRewardPrevie
 import RelatedChallenges from '@/components/challenge/RelatedChallenges'
 import CompletionCelebrationModal from '@/components/challenge/CompletionCelebrationModal'
 import { fetchChallengeByDay } from '@/services/challengeService'
+import { ChallengeSkeleton } from '@/components/ui/Skeletons'
 
 export default function ChallengesPage() {
   const [challenge, setChallenge] = useState(null)
@@ -51,10 +52,7 @@ export default function ChallengesPage() {
         description="Please wait while we prepare your coding mission workspace."
         className="space-y-6 pt-2"
       >
-        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-          <div className="w-12 h-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-sm font-bold text-neutral-400">Loading workspace files...</p>
-        </div>
+        <ChallengeSkeleton />
       </PageWrapper>
     )
   }
